@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # DB Master: Chuyên xử lý các lệnh Ghi (Write) cho IAM Service [cite: 124, 132]
+  iam-db-master:
+    image: bitnami/postgresql:latest
+    container_name: iam-db-master
+    ports:
+      - "5433:5432" # Map port 5433 máy thật vào 5432 container
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_USERNAME=iam_admin
+      - POSTGRESQL_PASSWORD=iam_password_123
+      - POSTGRESQL_DATABASE=iam_db
+    volumes:
+      - iam_master_data:/bitnami/postgresql
+
+  # DB Slave: Chuyên xử lý các lệnh Đọc (Read) cho IAM Service
+  iam-db-slave:
+    image: bitnami/postgresql:latest
+    container_name: iam-db-slave
+    depends_on:
+      - iam-db-master
+    ports:
+      - "5434:5432" # Map port 5434 máy thật vào 5432 container
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_MASTER_HOST=iam-db-master
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_git add .PASSWORD=iam_password_123
+    volumes:
+      - iam_slave_data:/bitnami/postgresql
+
+volumes:
+  iam_master_data:
+  iam_slave_data:
