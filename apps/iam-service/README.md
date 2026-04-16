@@ -1,98 +1,31 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🛡️ Capital Coffee - IAM Service (Identity & Access Management)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Dịch vụ IAM là "trái tim" bảo mật của hệ thống Microservices Capital Coffee. Được thiết kế để quản lý danh tính, phân quyền và kiểm soát truy cập với khả năng chịu tải cao.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Công nghệ sử dụng (Tech Stack)
+* **Framework:** NestJS (Node.js)
+* **ORM:** Prisma 7.x (Sử dụng Driver Adapter cho PostgreSQL)
+* **Database:** PostgreSQL Cluster (Master-Slave Replication)
+* **Security:** Argon2 (Password Hashing), Passport.js (JWT & Local Strategy)
+* **Validation:** Class-validator & Class-transformer
+* **Architecture:** Clean Architecture & Repository Pattern
 
-## Description
+## 🏗️ Kiến trúc hạ tầng (Infrastructure)
+Dịch vụ áp dụng mô hình **Master-Slave Replication** để tối ưu hóa hiệu năng:
+* **Master (Port 5433):** Chuyên xử lý các lệnh Ghi (Write) như Register, Update Profile, Revoke Token.
+* **Slave (Port 5434):** Chuyên xử lý các lệnh Đọc (Read) như Validate User, Check Permission, Fetch Profile.
+* **Database Transaction:** Đảm bảo tính nguyên tử (Atomicity) cho các luồng phức tạp (ví dụ: Tạo User đi kèm gán Role và ghi Audit Log).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
 
-```bash
-$ npm install
-```
+## 🔐 Tính năng cốt lõi (Core Features)
+1.  **RBAC (Role-Based Access Control):** Phân quyền dựa trên vai trò (SYSTEM_ADMIN, BRANCH_MANAGER, CUSTOMER...).
+2.  **Token Rotation:** Cơ chế làm mới Token an toàn, tự động thu hồi (Revoke) Refresh Token cũ để chống tấn công chiếm quyền phiên.
+3.  **Audit Logging:** Ghi lại vết mọi thao tác nhạy cảm (Login, Register, Logout) phục vụ kiểm toán và bảo mật.
+4.  **Session Management:** Quản lý phiên làm việc theo thời gian thực, hỗ trợ theo dõi IP và thiết bị truy cập.
+5.  **Multi-Identity Login:** Cho phép đăng nhập linh hoạt bằng cả Email hoặc Số điện thoại.
 
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🛠️ Kỹ năng chuyên sâu đã áp dụng
+* **Prisma 7 Adapter:** Khởi tạo kết nối thông qua `pg.Pool` thay vì URL trực tiếp, tối ưu cho môi trường High-performance.
+* **Repository Pattern:** Tách biệt lớp logic nghiệp vụ và lớp truy xuất dữ liệu, giúp code dễ dàng Unit Test và bảo trì.
+* **Security Best Practices:** Loại bỏ dữ liệu nhạy cảm (password hash) ngay tại tầng Service, áp dụng cơ chế băm mật khẩu hiện đại nhất (Argon2).
